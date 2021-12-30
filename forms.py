@@ -21,7 +21,7 @@ class LoginForm(FlaskForm):
 class UserTeamPlayerAdd(FlaskForm):
     """form to add a users fantasy tema to profile"""
 
-    player_name = StringField("Player's Name", validators=[DataRequired()], limit)
+    player_name = StringField("Player's Name", validators=[DataRequired()])
 
 class PlayerSearchFrom(FlaskForm):
     """form used to search for specific player"""
