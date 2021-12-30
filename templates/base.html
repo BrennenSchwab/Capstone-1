@@ -8,6 +8,18 @@
     <title>NBA HUB</title>
 </head>
 <body>
-    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <a class="navbar-brand" href="/">Playlists</a>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/stats">Playlists</a></li>
+          <li class="nav-item"><a class="nav-link" href="/songs">Songs</a></li>
+        </ul>
+      </nav>
+      
+      
+      <div class="container">
+      {% block content %}
+      {% endblock %}
+      </div>
 </body>
 </html>
