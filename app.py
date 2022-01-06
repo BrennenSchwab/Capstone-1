@@ -5,26 +5,35 @@ from sqlalchemy.sql.elements import Null
 from nba_api.stats.library import data, parameters
 from nba_api.stats.static import teams, players
 import pandas as pd
-from models import db, connect_db, User, Player, Season, Team, UserTeam
+from models import db, connect_db, User, Player, UserTeam
 from forms import SignUpForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
-from helper import get_player_stats_opponents, get_player_stats_total, get_player_stats_avg, get_lastngames_stats, get_player_stats_location, get_position_and_team
-from seed import seed_basic_player_info
+from helper import (
+    get_player_stats_opponents,
+    get_player_stats_total,
+    get_player_stats_avg,
+    get_lastngames_stats,
+    get_player_stats_location,
+    get_position_and_team,
+)
+
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///nba_stats'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
-app.config['SECRET_KEY'] = "p-word-here-shhhhh"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///nba_stats"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ECHO"] = False
+app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = True
+app.config["SECRET_KEY"] = "p-word-here-shhhhh"
 
 connect_db(app)
 
-seed_basic_player_info()
-
-player_headshot = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/" + players_list['id'] + ".png"
+# player_headshot = (
+#     "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/"
+#     + players_list["id"]
+#     + ".png"
+# )
 
 
 @app.before_request
@@ -51,12 +60,9 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 
-
-@app.route('/signup', methods=["GET", "POST"])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    """user signup
-
-    """
+    """user signup"""
 
     form = SignUpForm()
 
@@ -71,64 +77,67 @@ def signup():
             db.session.commit()
 
         except IntegrityError:
-            flash("Username already taken", 'danger')
-            return render_template('signup.html', form=form)
+            flash("Username already taken", "danger")
+            return render_template("signup.html", form=form)
 
         do_login(user)
 
         return redirect("/")
 
     else:
-        return render_template('signup.html', form=form)
+        return render_template("signup.html", form=form)
 
 
-@app.route('/login', methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     """Handle user login."""
 
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.authenticate(form.username.data,
-                                 form.password.data)
+        user = User.authenticate(form.username.data, form.password.data)
 
         if user:
             do_login(user)
             return redirect("/")
 
-        flash("Invalid credentials.", 'danger')
+        flash("Invalid credentials.", "danger")
 
-    return render_template('users/login.html', form=form)
+    return render_template("users/login.html", form=form)
 
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     """Handle logout of user."""
 
     do_logout()
 
-    flash("User has logged out", 'success')
+    flash("User has logged out", "success")
     return redirect("/login")
 
-@app.route('/')
+
+@app.route("/")
 def root():
-    return redirect('/home')
+    return redirect("/home")
+
 
 @app.route("/home")
 def home():
     """Homepage."""
-    
+
     form = PlayerSearchFrom()
     form.player_names.choices = [
         (player.id, player.full_name, player.last_name, player.first_name)
-        for player in Player.query.order_by(Player.last_name, Player.first_name).all()]
+        for player in Player.query.order_by(Player.last_name, Player.first_name).all()
+    ]
 
-    return render_template('home.html', form=form)
+    return render_template("home.html", form=form)
+
 
 @app.route("/home", methods=["POST"])
 def search_player():
-    """ Search Player form handling"""
-    search = request.args.get('q')
+    """Search Player form handling"""
+    search = request.args.get("q")
 
     if not search:
         flash("Entry not valid, Select a Current NBA Player")
@@ -138,34 +147,24 @@ def search_player():
         get_position_and_team(player_id=player.id)
         return redirect("/players")
 
+
 @app.route("/players")
 def players_search_results():
 
-    return render_template("index.html") 
+    return render_template("index.html")
 
 
-@app.route("players/<int:player_id>")
+@app.route("/players/<int:player_id>")
 def player_page(player_id):
     """Display player page"""
-
-    
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     """Show 404 NOT FOUND page."""
 
-    return render_template('404.html'), 404
+    return render_template("404.html"), 404
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
