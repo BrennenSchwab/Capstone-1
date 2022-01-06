@@ -147,8 +147,8 @@ def players_search_results():
 @app.route("players/<int:player_id>")
 def player_page(player_id):
     """Display player page"""
-    
 
+    
 
 
 @app.errorhandler(404)
