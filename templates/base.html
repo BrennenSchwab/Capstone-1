@@ -18,7 +18,7 @@
           <ul class="nav navbar-nav navbar-right">
             {% if request.endpoint != None %}
             <li>
-              <form class="navbar-form navbar-right" action="/users">
+              <form class="navbar-form navbar-right" action="/players">
                 <input name="q" class="form-control" placeholder="Search Player" id="search">
                 <button class="btn btn-default">
                   <span class="fa fa-search"></span>
@@ -32,10 +32,10 @@
             {% else %}
             <li>
               <a href="/users/{{ g.user.id }}">
-                <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
+                <LABEl alt="{{ g.user.username }}"></LABEl>
               </a>
             </li>
-            <li><a href="/fantasy-team/new">Create Team</a></li>
+            <li><a href="/users-team/new">Create Team</a></li>
             <li><a href="/logout">Log out</a></li>
             {% endif %}
           </ul>

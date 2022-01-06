@@ -3,13 +3,12 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.elements import Null
 from nba_api.stats.library import data, parameters
+from nba_api.stats.static import teams, players
 import pandas as pd
 from models import db, connect_db, User, Player, Season, Team, UserTeam
-from forms import UserAddForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
-from helper import get_player_stats_opponents, get_player_stats_total, get_player_stats_avg, get_lastngames_stats, get_player_stats_location
-
-player_headshot = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/" + players_list['id'] + ".png"
-
+from forms import SignUpForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
+from helper import get_player_stats_opponents, get_player_stats_total, get_player_stats_avg, get_lastngames_stats, get_player_stats_location, get_position_and_team
+from seed import seed_basic_player_info
 
 CURR_USER_KEY = "curr_user"
 
@@ -23,9 +22,10 @@ app.config['SECRET_KEY'] = "p-word-here-shhhhh"
 
 connect_db(app)
 
-players_list = []
-teams_list = []
-teams_list = teams.get_teams()
+seed_basic_player_info()
+
+player_headshot = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/" + players_list['id'] + ".png"
+
 
 @app.before_request
 def add_user_to_g():
@@ -58,7 +58,7 @@ def signup():
 
     """
 
-    form = UserAddForm()
+    form = SignUpForm()
 
     if form.validate_on_submit():
         try:
@@ -110,39 +110,56 @@ def logout():
     flash("User has logged out", 'success')
     return redirect("/login")
 
-@app.route("/")
+@app.route('/')
 def root():
+    return redirect('/home')
+
+@app.route("/home")
+def home():
     """Homepage."""
     
-    return render_template('home.html')
+    form = PlayerSearchFrom()
+    form.player_names.choices = [
+        (player.id, player.full_name, player.last_name, player.first_name)
+        for player in Player.query.order_by(Player.last_name, Player.first_name).all()]
+
+    return render_template('home.html', form=form)
+
+@app.route("/home", methods=["POST"])
+def search_player():
+    """ Search Player form handling"""
+    search = request.args.get('q')
+
+    if not search:
+        flash("Entry not valid, Select a Current NBA Player")
+        return redirect("/home")
+    else:
+        player = Player.query.filter(Player.full_name.like(f"%{search}%")).all()
+        get_position_and_team(player_id=player.id)
+        return redirect("/players")
+
+@app.route("/players")
+def players_search_results():
+
+    return render_template("index.html") 
 
 
-
-
-##player_dict = players.get_players()
-###Use ternary operator or write function
-###Names are case sensitive
-##bron =[player for player in player_dict if player['full_name']=='LeBron James'][0]
-##bron_id = bron['id']
-##
-##print (bron, bron_id)
-
-##class Fpts:
-##    def __init__(self, fpts):
-##        self.fpts =fpts
-##
-##    def __repr__(self): 
-##        return "Test fpts:% s" % (self.fpts) 
-##
-##    def __str__(self): 
-##        return "From str method of Test: fpts is % s, " % (self.fpts) 
+@app.route("players/<int:player_id>")
+def player_page(player_id):
+    """Display player page"""
     
 
-## bron_fpts = playerfantasyprofile.PlayerFantasyProfile(player_id='2544', season_type_playoffs='Regular Season')
-## bron_df = bron_fpts.get_data_frames()[4]
-## 
-## print(bron_df.head(32))
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """Show 404 NOT FOUND page."""
+
+    return render_template('404.html'), 404
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 

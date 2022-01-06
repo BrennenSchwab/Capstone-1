@@ -21,7 +21,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, default="/static/images/default-pic.png")
 
-
+    
 
     @classmethod
     def signup(cls, email, username, password, image_url):
@@ -79,11 +79,6 @@ class UserTeam(db.Model):
         db.ForeignKey('players.id', ondelete='CASCADE'),
         nullable=False,
         )
-## player_stats: here is where i dont want to get each stat, 
-# rather import a specific data set that is made by the api to be saved
-
-    user = db.relationship('User')
-    player = db.relationship('Player')
 
 
 class Player(db.Model):
@@ -91,33 +86,12 @@ class Player(db.Model):
 
     __tablename__ = 'players'
 
-    id = db.Column(db.Integer, primary_key=True)## value to be player id value on api
-    ## player_stats: here is where i dont want to get each stat, 
-# rather import a specific data set that is made by the api to be saved save as jsonfield
+    id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.Text())
     last_name = db.Column(db.Text())
     full_name = db.Column(db.Text())
 
-    team = db.relationship('Team', backref='players')
+    users = db.relationship("User", secondary="users_team", backref="players")
 
-class Season(db.Model):
-    """NBA Seaons tables"""
-    __tablename__ = 'seasons'
 
-    id = db.Column(db.Integer, primary_key=True)
-    season = db.Column(db.Integer, default="2022")
-    
-
-    player = db.relationship('Player')
-    team = db.relationship('Team')
-
-class Team(db.Model):
-    """List of teams"""
-    __tablename__ ="teams"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text())
-    abbr = db.Column(db.Text())
-
-    player = db.relationship('Player')
     

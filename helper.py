@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template, session, flash, redirect, g
 from nba_api.stats.library import parameters, data
-from nba_api.stats.static import teams, players
 from nba_api.stats.endpoints import playerfantasyprofile, commonplayerinfo
 from models import db, connect_db, User, Player, Season, Team, UserTeam
 from forms import UserAddForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
@@ -38,8 +37,7 @@ player_info_add = [
             "POSITION",
             "TEAM_ID",
             "TEAM_NAME",
-            "TEAM_ABBREVIATION",
-            "TEAM_CODE"]
+            "TEAM_ABBREVIATION"]
 
 def get_player_stats_avg(player_id):
     """
@@ -58,7 +56,7 @@ def get_player_stats_avg(player_id):
     return stats_avg.head()
 
 
-def get_player_stats_total(player_id, season):
+def get_player_stats_total(player_id):
     """
     function to get a players total stats in the current season
     """
@@ -121,7 +119,7 @@ def get_player_stats_location(player_id):
     return stats_loc.head()
 
 
-def get_position_and_team(player_id=2544):
+def get_position_and_team(player_id):
     """ get updated position and team data for a specific player """
 
     player_data = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
@@ -131,6 +129,5 @@ def get_position_and_team(player_id=2544):
     info_new = df[player_info_add]
 
 
-    print(info_new.head())
+    return info_new.head()
 
-get_position_and_team()

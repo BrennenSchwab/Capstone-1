@@ -4,7 +4,7 @@ from wtforms.fields.simple import PasswordField
 from wtforms.validators import DataRequired, Email, InputRequired, Optional, Length
 
 
-class UserAddForm(FlaskForm):
+class SignUpForm(FlaskForm):
     """Form for adding users."""
 
     username = StringField('Username', validators=[DataRequired()])
@@ -26,5 +26,5 @@ class UserTeamPlayerAdd(FlaskForm):
 class PlayerSearchFrom(FlaskForm):
     """form used to search for specific player"""
 
-    player_name = SelectField("Player's Name", validators=[DataRequired()])
+    player_names = StringField("Player's Name", choices=[], validators=[DataRequired()])
 
