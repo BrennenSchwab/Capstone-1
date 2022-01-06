@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, TextAreaField
+from wtforms import StringField, SelectField
 from wtforms.fields.simple import PasswordField
 from wtforms.validators import DataRequired, Email, InputRequired, Optional, Length
 
@@ -26,5 +26,5 @@ class UserTeamPlayerAdd(FlaskForm):
 class PlayerSearchFrom(FlaskForm):
     """form used to search for specific player"""
 
-    player_name = StringField("Player's Name", validators=[DataRequired()])
+    player_name = SelectField("Player's Name", validators=[DataRequired()])
 

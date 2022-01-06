@@ -93,11 +93,10 @@ class Player(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)## value to be player id value on api
     ## player_stats: here is where i dont want to get each stat, 
-# rather import a specific data set that is made by the api to be saved
-    name = db.Column(db.Text)
-    team = db.Column(db.Text)
-    position = db.Column(db.Text)
-    is_active = db.Column(db.Boolean)
+# rather import a specific data set that is made by the api to be saved save as jsonfield
+    first_name = db.Column(db.Text())
+    last_name = db.Column(db.Text())
+    full_name = db.Column(db.Text())
 
     team = db.relationship('Team', backref='players')
 
@@ -106,7 +105,7 @@ class Season(db.Model):
     __tablename__ = 'seasons'
 
     id = db.Column(db.Integer, primary_key=True)
-    season = db.column(db.Integer, default="2022")
+    season = db.Column(db.Integer, default="2022")
     
 
     player = db.relationship('Player')
@@ -117,34 +116,8 @@ class Team(db.Model):
     __tablename__ ="teams"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-    abbr = db.Column(db.Text)
-    conference = db.Column(db.Text)
-    division = db.Column(db.Text)
-    
+    name = db.Column(db.Text())
+    abbr = db.Column(db.Text())
+
     player = db.relationship('Player')
     
-class Game(db.Model):
-    """Game Id list"""
-    __tablename__= 'games'
-
-    id = db.Column(db.Integer, primary_key=True)
-    season_id = db.Column(
-        db.Integer,
-        db.ForeignKey('seasons.id', ondelete='CASCADE'),
-        nullable=False,
-        )
-    home_id = db.Column(
-        db.Integer,
-        db.ForeignKey('teams.id', ondelete='CASCADE'),
-        nullable=False,
-        )
-    visitor_id = db.Column(
-        db.Integer,
-        db.ForeignKey('teams.id', ondelete='CASCADE'),
-        nullable=False,
-        )
-
-    date = db.Columne(db.Text)
-    
-    team = db.relationship('Player')
