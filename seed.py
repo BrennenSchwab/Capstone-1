@@ -1,5 +1,4 @@
-from nba_api.stats.library import parameters, data
-from nba_api.stats.static import teams, players
+from nba_api.stats.static import players
 from models import Player
 from app import db
 
