@@ -1,0 +1,11 @@
+.image-logo {
+	max-width: 40px;
+	max-height: 40px;
+}
+
+.background-img {
+	background-image: "/static/images/background.png";
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+}

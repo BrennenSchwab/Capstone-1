@@ -126,12 +126,13 @@ def home():
     """Homepage."""
 
     form = PlayerSearchFrom()
-    form.player_names.choices = [
-        (player.id, player.full_name, player.last_name, player.first_name)
-        for player in Player.query.order_by(Player.last_name, Player.first_name).all()
-    ]
 
-    return render_template("home.html", form=form)
+    query = db.session.query(Player.full_name).all()
+    choices = [p[0]
+        for p in query
+    ]        
+    
+    return render_template("home.html", form=form, choices=choices)
 
 
 @app.route("/home", methods=["POST"])
@@ -145,7 +146,7 @@ def search_player():
     else:
         player = Player.query.filter(Player.full_name.like(f"%{search}%")).all()
         get_position_and_team(player_id=player.id)
-        return redirect("/players")
+        return redirect("/players/<int:player_id>")
 
 
 @app.route("/players")
@@ -157,6 +158,10 @@ def players_search_results():
 @app.route("/players/<int:player_id>")
 def player_page(player_id):
     """Display player page"""
+    player = Player.query.get_or_404(player_id)
+
+    return player
+
 
 
 @app.errorhandler(404)
