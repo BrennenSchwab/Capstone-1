@@ -34,11 +34,7 @@ stats_used = [
 
 
 player_info_add = [
-    "FIRST_NAME",
-    "LAST_NAME",
     "POSITION",
-    "TEAM_ID",
-    "TEAM_NAME",
     "TEAM_ABBREVIATION",
 ]
 
@@ -47,29 +43,44 @@ def get_player_stats_avg(player_id):
     """
     function to get a players avg stats in the current season
     """
-    data = playerfantasyprofile.PlayerFantasyProfile(
+    data1 = playerfantasyprofile.PlayerFantasyProfile(
         player_id=player_id, season_type_playoffs="Regular Season", per_mode36="PerGame"
     )
 
-    df = data.get_data_frames()[0]
+    df = data1.get_data_frames()[0]
+    stats_avg1 = df[stats_used]
 
-    stats_avg = df[stats_used]
-    return stats_avg.head()
+    data2 = playerfantasyprofile.PlayerFantasyProfile(
+        player_id=player_id, season_type_playoffs="Regular Season", per_mode36="PerGame", season='2020-21'
+    )
+    # add if statement for rookies. consider season as a changing value so its always prev season
+    df = data2.get_data_frames()[0]
+    stats_avg2 = df[stats_used]
+
+    return (stats_avg1.head(), stats_avg2.head())
 
 
 def get_player_stats_total(player_id):
     """
     function to get a players total stats in the current season
     """
-    data = playerfantasyprofile.PlayerFantasyProfile(
+    data1 = playerfantasyprofile.PlayerFantasyProfile(
         player_id=player_id, season_type_playoffs="Regular Season", per_mode36="Totals"
     )
 
-    df = data.get_data_frames()[0]
+    df = data1.get_data_frames()[0]
 
-    stats_totals = df[stats_used]
+    stats_totals1 = df[stats_used]
 
-    return stats_totals.head()
+    data2 = playerfantasyprofile.PlayerFantasyProfile(
+        player_id=player_id, season_type_playoffs="Regular Season", per_mode36="Totals", season='2020-21'
+    )
+
+    df = data2.get_data_frames()[0]
+
+    stats_totals2 = df[stats_used]
+
+    return (stats_totals1.head(), stats_totals2.head())
 
 
 def get_lastngames_stats(player_id):

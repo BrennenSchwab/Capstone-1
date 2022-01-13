@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
     <style>
         body {
-            background-image: url("/static/images/background.png");
+            background: linear-gradient(rgba(255,255,255,.3), rgba(255,255,255,.3)), url("static/images/background.png");
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
+
         }
     </style>
-      <div class="row justify-content-md-center">
-        <div class="col-md-7 col-lg-5">
-          <h2 class="join-message">Search For NBA Player Here:</h2>
+      <div class="home-page row justify-content-md-center">
+        <div class="col-lg-8">
+          <h2 class="">Search For NBA Player's Here:</h2>
 
           <form method="POST" id='searchform'>
             {{ form.hidden_tag() }}
@@ -22,11 +22,19 @@
                 <span class="text-danger">{{ error }}</span>
               {% endfor %}
               {{ field(placeholder=field.label.text, class="form-control") }}
+              <script>
+                $(document).ready(function() {
+                    $('#player_names').select2({ 
+                        placeholder: "{{ form.player_names.label.text }}",
+                        allowClear: true
+                    });
+                });
+                </script> 
             {% endfor %}
-
-            <button class="btn btn-primary btn-block btn-lg">Search</button>
+            <p></p>
+            <button type ="submit" class="btn btn-primary btn-lg">Search</button>
           </form>
         </div>
       </div>
-</div>
+
 {% endblock %}

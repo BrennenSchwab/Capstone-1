@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/lumen/bootstrap.css">
     <title>NBA HUB</title>
-    <link href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
     <link rel="stylesheet" href="/static/app.css">
-    <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
-    <script src="//code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand">
+    <nav class="navbar navbar-dark bg-primary navbar-expand">
         <div class="container-fluid">
           <div class="navbar-header">
             <a href="/" class="navbar-brand">
@@ -31,17 +35,17 @@
             </li>
             {% endif %} -->
             {% if not g.user %}
-            <li><a href="/signup">Sign up </a></li>
+            <li class="nav-item"><a class="nav-link" href="/signup">Sign up </a></li>
             &nbsp;
-            <li><a href="/login"> Log in</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login"> Log in</a></li>
             {% else %}
-            <li>
-              <a href="/users/{{ g.user.id }}">
-                <LABEl alt="{{ g.user.username }}"></LABEl>
-              </a>
+            <li class="nav-item">
+                <a class="nav-link" href="/users/{{ g.user.id }}">
+                    <LABEl alt="{{ g.user.username }}"></LABEl>
+                </a>
             </li>
-            <li><a href="/users-team/new">Create Team</a></li>&nbsp;
-            <li><a href="/logout">Log out</a></li>
+            <li class="nav-item"><a class="nav-link" href="/users-team/new">Create Team</a></li>&nbsp;
+            <li class="nav-item"><a class="nav-link" href="/logout">Log out</a></li>
             {% endif %}
           </ul>
         </div>

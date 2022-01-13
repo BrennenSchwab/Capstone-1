@@ -1,11 +1,12 @@
 .image-logo {
-	max-width: 40px;
-	max-height: 40px;
+	max-width: 50px;
+	max-height: 50px;
 }
 
-.background-img {
-	background-image: "/static/images/background.png";
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-size: cover;
+.home-page {
+	text-align: center;
+	font-family: monospace;
+	color: white;
+	border-color: black;
+	padding-top: 100px;
 }

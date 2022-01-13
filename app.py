@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, session, flash, redirect, g
+from flask import Flask, request, jsonify, render_template, session, flash, redirect, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.elements import Null
@@ -121,33 +121,21 @@ def root():
     return redirect("/home")
 
 
-@app.route("/home")
+@app.route("/home", methods=["GET", "POST"])
 def home():
-    """Homepage."""
+    """Homepage and player search handling."""
 
     form = PlayerSearchFrom()
 
-    query = db.session.query(Player.full_name).all()
-    choices = [p[0]
-        for p in query
-    ]        
+    query = (db.session.query(Player.id, Player.full_name).all())
+    form.player_names.choices = query     
     
-    return render_template("home.html", form=form, choices=choices)
+    if request.method == 'POST':
+        player = form.data['player_names']
+        print(player)
+        return redirect(url_for('player_page', player_id=player))
 
-
-@app.route("/home", methods=["POST"])
-def search_player():
-    """Search Player form handling"""
-    search = request.args.get("q")
-
-    if not search:
-        flash("Entry not valid, Select a Current NBA Player")
-        return redirect("/home")
-    else:
-        player = Player.query.filter(Player.full_name.like(f"%{search}%")).all()
-        get_position_and_team(player_id=player.id)
-        return redirect("/players/<int:player_id>")
-
+    return render_template("home.html", form=form)
 
 @app.route("/players")
 def players_search_results():
@@ -155,12 +143,18 @@ def players_search_results():
     return render_template("index.html")
 
 
-@app.route("/players/<int:player_id>")
+@app.route("/stats/<int:player_id>")
 def player_page(player_id):
     """Display player page"""
-    player = Player.query.get_or_404(player_id)
-
-    return player
+        
+    a = get_position_and_team(player_id=player_id)
+    s = get_player_stats_opponents(player_id=player_id)
+    d = get_player_stats_total(player_id=player_id)
+    f = get_player_stats_avg(player_id=player_id)
+    g = get_lastngames_stats(player_id=player_id)
+    h = get_player_stats_location(player_id=player_id)
+    print(a, s, d, f, g, h)
+    return render_template('playerpage.html', player_id=player_id)
 
 
 
