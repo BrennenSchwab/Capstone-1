@@ -19,6 +19,7 @@ def seed_basic_player_info():
                 first_name=player["first_name"],
                 last_name=player["last_name"],
                 full_name=player["full_name"],
+                
             )
         )
     db.session.bulk_save_objects(all_players)

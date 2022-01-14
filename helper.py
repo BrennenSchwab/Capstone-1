@@ -4,6 +4,7 @@ from nba_api.stats.endpoints import playerfantasyprofile, commonplayerinfo
 from models import db, User, Player, UserTeam
 from forms import LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
 import pandas as pd
+from IPython.display import HTML
 
 stats_used = [
     "GROUP_VALUE",
@@ -38,27 +39,53 @@ player_info_add = [
     "TEAM_ABBREVIATION",
 ]
 
+headers  = {
+    'Connection': 'keep-alive',
+    'Accept': 'application/json, text/plain, */*',
+    'x-nba-stats-token': 'true',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
+    'x-nba-stats-origin': 'stats',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'cors',
+    'Referer': 'https://stats.nba.com/',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'en-US,en;q=0.9',
+}
 
 def get_player_stats_avg(player_id):
     """
     function to get a players avg stats in the current season
     """
+
     data1 = playerfantasyprofile.PlayerFantasyProfile(
-        player_id=player_id, season_type_playoffs="Regular Season", per_mode36="PerGame"
+        player_id=player_id, season_type_playoffs="Regular Season", per_mode36="PerGame", headers=headers
     )
 
-    df = data1.get_data_frames()[0]
-    stats_avg1 = df[stats_used]
-
+    df1 = data1.get_data_frames()[0]
+    
     data2 = playerfantasyprofile.PlayerFantasyProfile(
-        player_id=player_id, season_type_playoffs="Regular Season", per_mode36="PerGame", season='2020-21'
+        player_id=player_id, season_type_playoffs="Regular Season", per_mode36="PerGame", headers=headers, season='2020-21'
     )
     # add if statement for rookies. consider season as a changing value so its always prev season
-    df = data2.get_data_frames()[0]
-    stats_avg2 = df[stats_used]
 
-    return (stats_avg1.head(), stats_avg2.head())
+    df2 = data2.get_data_frames()[0]
 
+    df = df1.append(df2)
+
+    stats_avg = df[stats_used]
+    
+    stats_avg.rename(columns={
+        'GROUP_VALUE': 'SEASON', 
+        'NBA_FANTASY_PTS': 'FPTS',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%'}, inplace=True)
+
+    stats_avg_new = stats_avg.head()
+
+    html = stats_avg_new.to_html()
+
+    return (html)
 
 def get_player_stats_total(player_id):
     """
@@ -68,19 +95,30 @@ def get_player_stats_total(player_id):
         player_id=player_id, season_type_playoffs="Regular Season", per_mode36="Totals"
     )
 
-    df = data1.get_data_frames()[0]
-
-    stats_totals1 = df[stats_used]
+    df1 = data1.get_data_frames()[0]
 
     data2 = playerfantasyprofile.PlayerFantasyProfile(
         player_id=player_id, season_type_playoffs="Regular Season", per_mode36="Totals", season='2020-21'
     )
 
-    df = data2.get_data_frames()[0]
+    df2 = data2.get_data_frames()[0]
 
-    stats_totals2 = df[stats_used]
+    df = df1.append(df2)
 
-    return (stats_totals1.head(), stats_totals2.head())
+    stats_tot = df[stats_used]
+    
+    stats_tot.rename(columns={
+        'GROUP_VALUE': 'SEASON', 
+        'NBA_FANTASY_PTS': 'FPTS',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%'}, inplace=True)
+
+    stats_tot_new = stats_tot.head()
+
+    html = stats_tot_new.to_html()
+
+    return (html)
 
 
 def get_lastngames_stats(player_id):
@@ -94,7 +132,18 @@ def get_lastngames_stats(player_id):
 
     stats_n_games = df[stats_used]
 
-    return stats_n_games.head()
+    stats_n_games.rename(columns={
+        'GROUP_VALUE': 'N-GAMES', 
+        'NBA_FANTASY_PTS': 'FPTS',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%'}, inplace=True)
+
+    stats_n_games_new = stats_n_games.head()
+
+    html = stats_n_games_new.to_html()
+
+    return html
 
 
 def get_player_stats_opponents(player_id):
@@ -108,7 +157,18 @@ def get_player_stats_opponents(player_id):
 
     stats_vs = df[stats_used]
 
-    return stats_vs.head(32)
+    stats_vs.rename(columns={
+        'GROUP_VALUE': 'OPPONENT', 
+        'NBA_FANTASY_PTS': 'FPTS',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%'}, inplace=True)
+
+    stats_vs_new = stats_vs.head(32)
+
+    html = stats_vs_new.to_html()
+
+    return html
 
 
 def get_player_stats_location(player_id):
@@ -122,7 +182,18 @@ def get_player_stats_location(player_id):
 
     stats_loc = df[stats_used]
 
-    return stats_loc.head()
+    stats_loc.rename(columns={
+        'GROUP_VALUE': 'LOCATION', 
+        'NBA_FANTASY_PTS': 'FPTS',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%'}, inplace=True)
+
+    stats_loc_new = stats_loc.head()
+
+    html = stats_loc_new.to_html()
+
+    return html
 
 
 def get_position_and_team(player_id):
@@ -133,5 +204,6 @@ def get_position_and_team(player_id):
     df = player_data.get_data_frames()[0]
 
     info_new = df[player_info_add]
+    info_new.head()
 
     return info_new.head()
