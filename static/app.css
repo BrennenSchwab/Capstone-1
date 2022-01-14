@@ -1,6 +1,7 @@
 .image-logo {
 	max-width: 50px;
 	max-height: 50px;
+	background: transparent;
 }
 
 .home-page {

@@ -4,6 +4,8 @@ from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+default_img = "/static/images/default-pic.png"
+
 def connect_db(app):
     """Connect to database."""
 
@@ -90,6 +92,7 @@ class Player(db.Model):
     first_name = db.Column(db.Text())
     last_name = db.Column(db.Text())
     full_name = db.Column(db.Text())
+    player_img = db.Column(db.Text, default=default_img)
 
     users = db.relationship("User", secondary="users_team", backref="players")
 

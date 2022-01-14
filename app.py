@@ -5,9 +5,11 @@ from sqlalchemy.sql.elements import Null
 from nba_api.stats.library import data, parameters
 from nba_api.stats.static import teams, players
 import pandas as pd
+from IPython.display import HTML
 from models import db, connect_db, User, Player, UserTeam
 from forms import SignUpForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
 from helper import (
+    stats_used,
     get_player_stats_opponents,
     get_player_stats_total,
     get_player_stats_avg,
@@ -29,11 +31,7 @@ app.config["SECRET_KEY"] = "p-word-here-shhhhh"
 
 connect_db(app)
 
-# player_headshot = (
-#     "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/"
-#     + players_list["id"]
-#     + ".png"
-# )
+img_url="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/"
 
 
 @app.before_request
@@ -133,28 +131,39 @@ def home():
     if request.method == 'POST':
         player = form.data['player_names']
         print(player)
+        player_img = img_url+(player)+".png"
+
+        for p in Player:
+            if p.id == player:
+                update_img = p(player_img=player_img)
+                db.session.add(update_img)
+                db.session.commit()
+
         return redirect(url_for('player_page', player_id=player))
 
     return render_template("home.html", form=form)
-
-@app.route("/players")
-def players_search_results():
-
-    return render_template("index.html")
 
 
 @app.route("/stats/<int:player_id>")
 def player_page(player_id):
     """Display player page"""
-        
+    
+    player = Player.query.get_or_404(player_id)
+
     a = get_position_and_team(player_id=player_id)
-    s = get_player_stats_opponents(player_id=player_id)
     d = get_player_stats_total(player_id=player_id)
     f = get_player_stats_avg(player_id=player_id)
-    g = get_lastngames_stats(player_id=player_id)
     h = get_player_stats_location(player_id=player_id)
-    print(a, s, d, f, g, h)
-    return render_template('playerpage.html', player_id=player_id)
+    g = get_lastngames_stats(player_id=player_id)
+    s = get_player_stats_opponents(player_id=player_id)
+    
+
+    print(f)
+
+    
+    results = str(f)
+
+    return render_template('playerpage.html', player_id=player_id, results=results, player=player)
 
 
 

@@ -1,6 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Hello</h2>
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script></head>
+<ul>
+    {% for player in Player %}
+        {% if player.id == player_id %}
+        <li>
+            <img src="{{ player.player_img }}">
+        </li>
+        <li>Name: {{ player.full_name }}</li>
+</ul>
+
+<p></p>
+
+
+
 
 {% endblock %}
