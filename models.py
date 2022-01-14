@@ -6,6 +6,7 @@ db = SQLAlchemy()
 
 default_img = "/static/images/default-pic.png"
 
+
 def connect_db(app):
     """Connect to database."""
 
@@ -15,6 +16,7 @@ def connect_db(app):
 
 class User(db.Model):
     """User table parameters"""
+
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -23,8 +25,6 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, default="/static/images/default-pic.png")
 
-    
-
     @classmethod
     def signup(cls, email, username, password, image_url):
         """Sign up user.
@@ -32,7 +32,7 @@ class User(db.Model):
         Hashes password and adds user to system.
         """
 
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+        hashed_pwd = bcrypt.generate_password_hash(password).decode("UTF-8")
 
         user = User(
             username=username,
@@ -64,29 +64,30 @@ class User(db.Model):
 
         return False
 
+
 class UserTeam(db.Model):
     """User's saved team that will display the user's
     fantasy team and show statistics and link to player pages"""
 
     __tablename__ = "users_team"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete='CASCADE'),
+        db.ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
-        )
+    )
     player_id = db.Column(
         db.Integer,
-        db.ForeignKey('players.id', ondelete='CASCADE'),
+        db.ForeignKey("players.id", ondelete="CASCADE"),
         nullable=False,
-        )
+    )
 
 
 class Player(db.Model):
     """Table containing reference to requested players list."""
 
-    __tablename__ = 'players'
+    __tablename__ = "players"
 
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.Text())
@@ -97,4 +98,13 @@ class Player(db.Model):
     users = db.relationship("User", secondary="users_team", backref="players")
 
 
-    
+class PlayerPreviousStat(db.Model):
+    __tablename__ = "player_prev_stat"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    player_id = db.Column(
+        db.Integer,
+        db.ForeignKey("players.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    per_mode36 = db.Column(db.Text())
+    stat = db.Column(db.JSON, nullable=True)

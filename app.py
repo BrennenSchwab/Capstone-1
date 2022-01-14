@@ -1,4 +1,14 @@
-from flask import Flask, request, jsonify, render_template, session, flash, redirect, g, url_for
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    render_template,
+    session,
+    flash,
+    redirect,
+    g,
+    url_for,
+)
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.elements import Null
@@ -8,15 +18,7 @@ import pandas as pd
 from IPython.display import HTML
 from models import db, connect_db, User, Player, UserTeam
 from forms import SignUpForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
-from helper import (
-    stats_used,
-    get_player_stats_opponents,
-    get_player_stats_total,
-    get_player_stats_avg,
-    get_lastngames_stats,
-    get_player_stats_location,
-    get_position_and_team,
-)
+from helper import stats_used, PlayerFantasy
 
 
 CURR_USER_KEY = "curr_user"
@@ -30,8 +32,6 @@ app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = True
 app.config["SECRET_KEY"] = "p-word-here-shhhhh"
 
 connect_db(app)
-
-img_url="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/"
 
 
 @app.before_request
@@ -101,7 +101,7 @@ def login():
 
         flash("Invalid credentials.", "danger")
 
-    return render_template("users/login.html", form=form)
+    return render_template("login.html", form=form)
 
 
 @app.route("/logout")
@@ -125,21 +125,12 @@ def home():
 
     form = PlayerSearchFrom()
 
-    query = (db.session.query(Player.id, Player.full_name).all())
-    form.player_names.choices = query     
-    
-    if request.method == 'POST':
-        player = form.data['player_names']
-        print(player)
-        player_img = img_url+(player)+".png"
+    query = db.session.query(Player.id, Player.full_name).all()
+    form.player_names.choices = query
 
-        for p in Player:
-            if p.id == player:
-                update_img = p(player_img=player_img)
-                db.session.add(update_img)
-                db.session.commit()
-
-        return redirect(url_for('player_page', player_id=player))
+    if request.method == "POST":
+        player_id = form.data["player_names"]
+        return redirect(url_for("player_page", player_id=player_id))
 
     return render_template("home.html", form=form)
 
@@ -147,24 +138,21 @@ def home():
 @app.route("/stats/<int:player_id>")
 def player_page(player_id):
     """Display player page"""
-    
+
     player = Player.query.get_or_404(player_id)
+    player_fantasy = PlayerFantasy(player_id)
+    a = player_fantasy.get_position_and_team()
+    d = player_fantasy.get_player_stats_total()
+    f = player_fantasy.get_player_stats_avg()
+    h = player_fantasy.get_player_stats_location()
+    g = player_fantasy.get_lastngames_stats()
+    s = player_fantasy.get_player_stats_opponents()
 
-    a = get_position_and_team(player_id=player_id)
-    d = get_player_stats_total(player_id=player_id)
-    f = get_player_stats_avg(player_id=player_id)
-    h = get_player_stats_location(player_id=player_id)
-    g = get_lastngames_stats(player_id=player_id)
-    s = get_player_stats_opponents(player_id=player_id)
-    
-
-    print(f)
-
-    
     results = str(f)
 
-    return render_template('playerpage.html', player_id=player_id, results=results, player=player)
-
+    return render_template(
+        "playerpage.html", player_id=player_id, results=results, player=player
+    )
 
 
 @app.errorhandler(404)
