@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-8">
+        <h1 class="">Add Player's Here:</h1>
+        <div>
+            <form method="POST" id='teamform'>
+            {{ form.hidden_tag() }}
+
+            {% for field in form if field.widget.input_type != 'hidden' %}
+                {% for error in field.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+                <form method ="POST" id="add">
+                {{ field(placeholder=field.label.text, class="form-control") }}
+                <script>
+                    $(document).ready(function() {
+                        $('#player_names').select2({ 
+                            placeholder: "{{ form.player_names.label.text }}",
+                            allowClear: true
+                    });
+                });
+                </script>
+                <button type ="submit" class="btn btn-success btn-md">Add Player</button> 
+                </form>
+                <script>
+                    $(document).on('submit', '#add', function(e){
+                        e.preventDefault();
+                        $.ajax({
+                            url: "createteam.html",
+                            type:'POST',
+                            data:{new_player: $('#player_names').val()},
+                            success: function()
+                            {
+                                
+                                
+                            }               
+                        });
+                    });
+                    </script>
+            {% endfor %}
+
+            
+            <p></p>
+            
+            <button type ="submit" class="btn btn-primary btn-lg">Submit Team</button>
+            </form>
+        </div>
+    </div>
+  </div>
+
+{% endblock %}
