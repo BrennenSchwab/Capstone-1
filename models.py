@@ -27,7 +27,7 @@ class User(db.Model):
     background_image = db.Column(db.Text, default="/static/images/background.png")
 
     @classmethod
-    def signup(cls, email, username, password, image_url):
+    def signup(cls, email, username, password, image_url, background_image):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -40,6 +40,7 @@ class User(db.Model):
             email=email,
             password=hashed_pwd,
             image_url=image_url,
+            background_image=background_image,
         )
 
         db.session.add(user)
@@ -95,8 +96,7 @@ class Player(db.Model):
     last_name = db.Column(db.Text())
     full_name = db.Column(db.Text())
     player_img = db.Column(db.Text, default=default_img)
-    
-    
+
     users = db.relationship("User", secondary="users_team", backref="players")
 
 
