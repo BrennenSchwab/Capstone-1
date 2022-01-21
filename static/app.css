@@ -1,7 +1,20 @@
+.dropdown:hover .dropdown-menu {
+	display: block;
+	position: absolute;
+	right: 0;
+	font-size: 12px;
+}
+
 .image-logo {
 	max-width: 50px;
 	max-height: 50px;
 	background: transparent;
+}
+
+.image-user {
+	max-width: 50px;
+	max-height: 50px;
+	border-radius: 50%;
 }
 
 .home-page {
@@ -10,4 +23,69 @@
 	color: white;
 	border-color: black;
 	padding-top: 100px;
+}
+
+.nav-gap {
+	padding-top: 100px;
+}
+h2 {
+	color: rgb(41, 43, 44);
+	-webkit-text-stroke: 1px black;
+	font-size: 26px;
+}
+
+table {
+	width: 100%;
+}
+
+table,
+th,
+td {
+	text-align: center;
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+th {
+	height: 20px;
+	background: rgb(41, 43, 44);
+	color: white;
+	min-width: fit-content;
+}
+
+tr:nth-child(even) {
+	background-color: #d4d0d0;
+}
+
+th:first-child {
+	width: 200px;
+}
+
+.stats {
+	color: rgb(0, 0, 0);
+	font-size: 14px;
+	font-size: 1vw;
+	margin-bottom: 30px;
+}
+
+.hidden {
+	display: none;
+}
+
+.info {
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+li {
+	font-size: 12px;
+}
+
+.edit-btn-area {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 10px;
+}
+
+.edit-btn-area > .btn {
+	width: 48%;
 }

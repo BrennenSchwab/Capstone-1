@@ -24,6 +24,7 @@ class User(db.Model):
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, default="/static/images/default-pic.png")
+    background_image = db.Column(db.Text, default="/static/images/background.png")
 
     @classmethod
     def signup(cls, email, username, password, image_url):
@@ -94,7 +95,8 @@ class Player(db.Model):
     last_name = db.Column(db.Text())
     full_name = db.Column(db.Text())
     player_img = db.Column(db.Text, default=default_img)
-
+    
+    
     users = db.relationship("User", secondary="users_team", backref="players")
 
 

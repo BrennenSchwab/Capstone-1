@@ -1,9 +1,7 @@
-from flask import Flask, request, jsonify, render_template, session, flash, redirect, g
-from nba_api.stats.library import parameters, data
 from nba_api.stats.endpoints import playerfantasyprofile, commonplayerinfo
-from models import db, User, Player, UserTeam
-from forms import LoginForm, UserTeamPlayerAdd, PlayerSearchFrom
 import pandas as pd
+import pdb
+
 from IPython.display import HTML
 
 stats_used = [
@@ -35,22 +33,20 @@ stats_used = [
 
 
 player_info_add = [
+    "BIRTHDATE",
+    "SCHOOL",
+    "COUNTRY",
+    "HEIGHT",
+    "WEIGHT",
+    "SEASON_EXP",
     "POSITION",
+    "TEAM_NAME",
     "TEAM_ABBREVIATION",
+    "TEAM_CITY",
+    
 ]
 
-headers = {
-    "Connection": "keep-alive",
-    "Accept": "application/json, text/plain, */*",
-    "x-nba-stats-token": "true",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
-    "x-nba-stats-origin": "stats",
-    "Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-Mode": "cors",
-    "Referer": "https://stats.nba.com/",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "en-US,en;q=0.9",
-}
+
 
 
 class PlayerFantasy:
@@ -67,7 +63,6 @@ class PlayerFantasy:
             player_id=self.player_id,
             season_type_playoffs="Regular Season",
             per_mode36="PerGame",
-            headers=headers,
         )
 
         df1 = data1.get_data_frames()[0]
@@ -76,31 +71,27 @@ class PlayerFantasy:
             player_id=self.player_id,
             season_type_playoffs="Regular Season",
             per_mode36="PerGame",
-            headers=headers,
             season="2020-21",
         )
-        # add if statement for rookies. consider season as a changing value so its always prev season
 
         df2 = data2.get_data_frames()[0]
 
         df = df1.append(df2)
 
-        stats_avg = df[stats_used]
+        stats_avg = df[stats_used].copy()
 
-        stats_avg.rename(
+        stats_avg_new = stats_avg.rename(
             columns={
                 "GROUP_VALUE": "SEASON",
                 "NBA_FANTASY_PTS": "FPTS",
                 "FG_PCT": "FG%",
                 "FG3_PCT": "FG3%",
                 "FT_PCT": "FT%",
-            },
-            inplace=True,
+            }
         )
 
-        stats_avg_new = stats_avg.head()
-
-        html = stats_avg_new.to_html()
+        html = stats_avg_new.to_html(index=False).replace("dataframe", "stats")
+        
         return html
 
     def get_player_stats_total(self):
@@ -123,25 +114,21 @@ class PlayerFantasy:
         )
 
         df2 = data2.get_data_frames()[0]
-
         df = df1.append(df2)
+        
+        stats_tot = df[stats_used].copy()
 
-        stats_tot = df[stats_used]
-
-        stats_tot.rename(
+        stats_tot_new = stats_tot.rename(
             columns={
                 "GROUP_VALUE": "SEASON",
                 "NBA_FANTASY_PTS": "FPTS",
                 "FG_PCT": "FG%",
                 "FG3_PCT": "FG3%",
                 "FT_PCT": "FT%",
-            },
-            inplace=True,
-        )
+            }
+        ).round({'MIN': 1})
 
-        stats_tot_new = stats_tot.head()
-
-        html = stats_tot_new.to_html()
+        html = stats_tot_new.to_html(index=False).replace("dataframe", "stats")
 
         return html
 
@@ -155,22 +142,19 @@ class PlayerFantasy:
 
         df = self.common_data[2]
 
-        stats_n_games = df[stats_used]
+        stats_n_games = df[stats_used].copy()
 
-        stats_n_games.rename(
+        stats_n_games_new = stats_n_games.rename(
             columns={
-                "GROUP_VALUE": "N-GAMES",
+                "GROUP_VALUE": "GAMES STREAK (avg)",
                 "NBA_FANTASY_PTS": "FPTS",
                 "FG_PCT": "FG%",
                 "FG3_PCT": "FG3%",
                 "FT_PCT": "FT%",
-            },
-            inplace=True,
+            }
         )
 
-        stats_n_games_new = stats_n_games.head()
-
-        html = stats_n_games_new.to_html()
+        html = stats_n_games_new.to_html(index=False).replace("dataframe", "stats")
 
         return html
 
@@ -183,22 +167,19 @@ class PlayerFantasy:
 
         df = self.common_data[4]
 
-        stats_vs = df[stats_used]
+        stats_vs = df[stats_used].copy()
 
-        stats_vs.rename(
+        stats_vs_new = stats_vs.rename(
             columns={
                 "GROUP_VALUE": "OPPONENT",
                 "NBA_FANTASY_PTS": "FPTS",
                 "FG_PCT": "FG%",
                 "FG3_PCT": "FG3%",
                 "FT_PCT": "FT%",
-            },
-            inplace=True,
-        )
+            }
+        ).head(32)
 
-        stats_vs_new = stats_vs.head(32)
-
-        html = stats_vs_new.to_html()
+        html = stats_vs_new.to_html(index=False).replace("dataframe", "stats")
 
         return html
 
@@ -212,22 +193,19 @@ class PlayerFantasy:
 
         df = self.common_data[1]
 
-        stats_loc = df[stats_used]
+        stats_loc = df[stats_used].copy()
 
-        stats_loc.rename(
+        stats_loc_new = stats_loc.rename(
             columns={
                 "GROUP_VALUE": "LOCATION",
                 "NBA_FANTASY_PTS": "FPTS",
                 "FG_PCT": "FG%",
                 "FG3_PCT": "FG3%",
                 "FT_PCT": "FT%",
-            },
-            inplace=True,
+            }
         )
 
-        stats_loc_new = stats_loc.head()
-
-        html = stats_loc_new.to_html()
+        html = stats_loc_new.to_html(index=False).replace("dataframe", "stats")
 
         return html
 
@@ -238,7 +216,30 @@ class PlayerFantasy:
 
         df = player_data.get_data_frames()[0]
 
-        info_new = df[player_info_add]
-        info_new.head()
+        info_new = df[player_info_add].copy()
+        position = info_new.at[0, 'POSITION']
+        abbr = info_new.at[0, 'TEAM_ABBREVIATION']
+        team_name = info_new.at[0, 'TEAM_NAME']
+        team_city = info_new.at[0, 'TEAM_CITY']
+        school = info_new.at[0, 'SCHOOL']
+        birthdate = info_new.at[0, 'BIRTHDATE']
+        country = info_new.at[0, 'COUNTRY']
+        height = info_new.at[0, 'HEIGHT']
+        weight = info_new.at[0, 'WEIGHT']
+        exp = info_new.at[0, 'SEASON_EXP']
+    
+    
+        return (
+            position, 
+            abbr, 
+            team_name, 
+            team_city, 
+            school, 
+            birthdate, 
+            country, 
+            height, 
+            weight, 
+            exp)
 
-        return info_new.head()
+
+

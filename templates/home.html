@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <style>
+    <style id = "background">
         body {
             background: linear-gradient(rgba(255,255,255,.3), rgba(255,255,255,.3)), url("static/images/background.png");
             background-repeat: no-repeat;
@@ -12,7 +12,7 @@
     </style>
       <div class="home-page row justify-content-md-center">
         <div class="col-lg-8">
-          <h2 class="">Search For NBA Player's Here:</h2>
+          <h1 class="">Search For NBA Player's Here:</h1>
 
           <form method="POST" id='searchform'>
             {{ form.hidden_tag() }}
@@ -34,7 +34,5 @@
             <p></p>
             <button type ="submit" class="btn btn-primary btn-lg">Search</button>
           </form>
-        </div>
       </div>
-
 {% endblock %}

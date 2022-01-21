@@ -1,19 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script></head>
-<ul>
-    {% for player in Player %}
-        {% if player.id == player_id %}
-        <li>
-            <img src="{{ player.player_img }}">
-        </li>
-        <li>Name: {{ player.full_name }}</li>
-</ul>
+<div class="row" style="margin-bottom: 40px;">
+    <div class="col-md-6" style="max-width: max-content;">
+        <img class="border border-3" src="{{ player.player_img }}">
+    </div>
+    <div class="col-md-6 align-self-end">
+        <ul>
+            <li><b>Name:</b> <span class="info">{{ player.full_name }}</span></li>
+            <li><b>Team:</b> <span class="info">{{ abbr }}, {{ team }}</span></li>
+            <li><b>Position:</b> <span class="info">{{ position }}</span></li>
+            <li><b>Physicals:</b><span class="info">Height (ft, in): {{ height }}, Weight (lbs): {{ weight }}</span></li>
+            <li> <b>Born:</b> <span class="info">{{ birthdate }}, {{ country }}</span></li>
+            <li><b>College:</b> <span class="info">{{ school }}</span></li>
+            <li><b>NBA Experience:</b> <span class="info">{{ exp }}</span></li>
+        </ul>    
+    </div> 
+</div>
+<div class="container-fluid stats" >
+        <h2>Stats Progression: Per Game</h2>
+        {{ avg }}
+        <p></p>
+        <h2>Stats Progression: Totals</h2>
+        {{ total }}
+        <p></p>
+        <h2>Game Streak</h2>
+        <p></p>
+        {{ ngames }}
+        <p></p>
+        <h2>Home vs. Away Stats</h2>
+        <p></p>
+        {{ location }}
+        <p></p>
+        <h2>Stats vs Opponent</h2>
+        <p></p>
+        {{ opponent }}
+        <p></p>
+    <p></p>
+</div>
 
-<p></p>
-
-
-
-
+<script>
+    $("table").off("click").on("click", function(e){
+    var $table = $(e.currentTarget)
+    $table.toggleClass("hidden")
+});
+</script>
 {% endblock %}

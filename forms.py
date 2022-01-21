@@ -11,6 +11,7 @@ class SignUpForm(FlaskForm):
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Length(min=6)])
     image_url = StringField('(Optional) Image URL')
+    background_image = StringField('(Optional) Image URL')
 
 class LoginForm(FlaskForm):
     """Login form."""
@@ -21,10 +22,18 @@ class LoginForm(FlaskForm):
 class UserTeamPlayerAdd(FlaskForm):
     """form to add a users fantasy tema to profile"""
 
-    player_name = StringField("Player's Name", validators=[DataRequired()])
+    player_name = SelectField("Enter Player Name", choices=[])
 
 class PlayerSearchFrom(FlaskForm):
     """form used to search for specific player"""
 
     player_names = SelectField(label="Enter Player Name", choices=[])    
 
+class UserEditForm(FlaskForm):
+    """User detail edit form"""
+
+    username = StringField('Username', validators=[DataRequired()]) 
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[Length(min=6)])
+    image_url = StringField('(Optional) Image URL')
+    background_image = StringField('(Optional) Home Page BAckground Image')
