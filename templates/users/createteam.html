@@ -18,26 +18,71 @@
                 <script>
                     $(document).ready(function() {
                         $('#player_names').select2({ 
-                            placeholder: "{{ form.player_names.label.text }}",
+                            placeholder: "{{ form.player_name.label.text }}",
                             allowClear: true
                     });
                 });
                 </script>
-                <button type ="submit" class="btn btn-success btn-md">Add Player</button> 
+                <button id ="addButton" type ="button" class="btn btn-success btn-md">Add Player</button> 
+                <button type ="submit" class="btn btn-primary btn-lg">Submit Team</button>
                 </form>
+                <div id="selectedPlayers">
+
+                </div>
                 <script>
-                    $(document).on('submit', '#add', function(e){
+                    const loadedPlayers=JSON.parse("{{addedPlayers}}")
+                    const myPlayers={}
+
+                    function addPlayer(name){
+                        const newParagraph= document.createElement("p")
+                        newParagraph.innerText=name
+                        return newParagraph
+                    }
+
+                    function constructPlayerNameFromId(id){
+                        const playerName=Array.from($("#player_name option")).find((o)=>o.value==id).text
+                        return playerName
+                    }
+                    
+                    function loadPlayers(){
+                        loadedPlayers.forEach((p)=>{
+                            const playerName=constructPlayerNameFromId(p)
+                            if(!myPlayers[p]){
+                                document.querySelector("#selectedPlayers").appendChild(addPlayer(playerName))
+                            }
+                            myPlayers[p]=playerName
+                        })
+                    }
+
+                    loadPlayers()
+                    
+                    $("#addButton").on('click', function(e){
+                        e.preventDefault();
+                        if(Object.keys(myPlayers).length<13)
+                        {
+                            const playerId=$("#player_name").val()
+                            const playerName=constructPlayerNameFromId(playerId)
+                            if(!myPlayers[playerId]){
+                                document.querySelector("#selectedPlayers").appendChild(addPlayer(playerName))
+                            }
+                            myPlayers[playerId] = playerName
+                            console.log(myPlayers)
+                        }
+                    });
+
+                    $("form").on('submit', function(e){
                         e.preventDefault();
                         $.ajax({
-                            url: "createteam.html",
+                            url: "/users/team/new",
                             type:'POST',
-                            data:{new_player: $('#player_names').val()},
-                            success: function()
-                            {
-                                
-                                
-                            }               
-                        });
+                            contentType: "application/json; charset=utf-8",
+                            data:JSON.stringify({players:myPlayers}),
+                            success: function (data) {  
+                                window.location=window.location.origin
+                             }
+                            
+                        })
+                        
                     });
                     </script>
             {% endfor %}
@@ -45,7 +90,6 @@
             
             <p></p>
             
-            <button type ="submit" class="btn btn-primary btn-lg">Submit Team</button>
             </form>
         </div>
     </div>

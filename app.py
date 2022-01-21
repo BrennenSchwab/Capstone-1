@@ -1,5 +1,3 @@
-from socket import timeout
-from turtle import position
 from flask import (
     Flask,
     request,
@@ -19,9 +17,15 @@ from nba_api.stats.static import teams, players
 import pandas as pd
 from IPython.display import HTML
 from models import db, connect_db, User, Player, UserTeam
-from forms import SignUpForm, LoginForm, UserTeamPlayerAdd, PlayerSearchFrom, UserEditForm
+from forms import (
+    SignUpForm,
+    LoginForm,
+    UserTeamPlayerAdd,
+    PlayerSearchFrom,
+    UserEditForm,
+)
 from helper import PlayerFantasy
-
+import json
 
 CURR_USER_KEY = "curr_user"
 
@@ -73,7 +77,8 @@ def signup():
                 password=form.password.data,
                 email=form.email.data,
                 image_url=form.image_url.data or User.image_url.default.arg,
-                background_image=form.background_image.data or User.background_image.default.arg,
+                background_image=form.background_image.data
+                or User.background_image.default.arg,
             )
             db.session.commit()
 
@@ -134,14 +139,14 @@ def home():
     if request.method == "POST":
 
         player_id = form.data["player_names"]
-        
-        if player_id == 'None':
 
-            flash("Enter Current NBA Player", 'danger')
-            return render_template('home.html', form=form)
-        
+        if player_id == "None":
+
+            flash("Enter Current NBA Player", "danger")
+            return render_template("home.html", form=form)
+
         return redirect(url_for("player_page", player_id=player_id))
-            
+
     return render_template("home.html", form=form)
 
 
@@ -180,9 +185,8 @@ def player_page(player_id):
 
     team = str(team_city) + " " + str(team_name)
 
-
     return render_template(
-        "playerpage.html", 
+        "playerpage.html",
         avg=avg_table,
         total=tot_table,
         ngames=ngames_table,
@@ -197,11 +201,11 @@ def player_page(player_id):
         country=country,
         height=height,
         weight=weight,
-        exp=exp
+        exp=exp,
     )
 
 
-@app.route('/users/team/new', methods=["GET", "POST"])
+@app.route("/users/team/new", methods=["GET", "POST"])
 def create_new_team():
     """Page to create a new fantasy team for specific user."""
 
@@ -211,28 +215,40 @@ def create_new_team():
 
     form = UserTeamPlayerAdd()
     query = db.session.query(Player.id, Player.full_name).all()
-    form.player_names.choices = query
+    form.player_name.choices = query
 
     if request.method == "POST":
-
-        players_added = UserTeam(player_id=form.data["player_names"])
-        g.user.users_team.append(players_added)
+        all_players = []
+        for pId in request.json["players"].keys():
+            u = UserTeam.query.filter_by(player_id=pId, user_id=g.user.id).first()
+            if not u:
+                all_players.append(UserTeam(player_id=pId, user_id=g.user.id))
+        db.session.bulk_save_objects(all_players)
         db.session.commit()
+        return "success"
 
-        return redirect(f"/users/team/{ g.user.users_teams.id }")
+    my_players = (
+        UserTeam.query.filter_by(user_id=g.user.id).with_entities("player_id").all()
+    )
+    added_players = []
+    for player in my_players:
+        added_players.append(player[0])
+    return render_template(
+        "/users/createteam.html",
+        form=form,
+        addedPlayers=json.dumps(added_players),
+    )
 
-    return render_template('/users/team/new.html', form=form)
 
-
-@app.route('/users/team/<int:users_team_id>')
+@app.route("/users/team/<int:users_team_id>")
 def show_user_team(users_team_id):
     """Display a user's created team"""
 
     users_team = UserTeam.query.get_or_404(users_team_id)
 
     user = users_team.user_id
-    players = users_team.player_id.get.all()#user.player_id
-    
+    players = users_team.player_id.get.all()  # user.player_id
+
     for player in players:
 
         player_fantasy = PlayerFantasy(player)
@@ -242,10 +258,17 @@ def show_user_team(users_team_id):
         position = a[0]
         team_abbr = a[1]
 
-    return render_template("fantasyteams.html", users_team=users_team, user=user, avg=avg_table, position=position, abbr=team_abbr)
+    return render_template(
+        "fantasyteams.html",
+        users_team=users_team,
+        user=user,
+        avg=avg_table,
+        position=position,
+        abbr=team_abbr,
+    )
 
 
-@app.route('/users/profile', methods=["GET", "POST"])
+@app.route("/users/profile", methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
 
@@ -259,18 +282,23 @@ def profile():
         if User.authenticate(g.user.username, form.password.data):
             g.user.username = form.username.data
             g.user.email = form.email.data
-            g.user.image_url = form.image_url.data or User.background_image.default.arg,
-            g.user.background_image = form.background_image.data or User.background_image.default.arg,
+            g.user.image_url = (
+                form.image_url.data or User.background_image.default.arg,
+            )
+            g.user.background_image = (
+                form.background_image.data or User.background_image.default.arg,
+            )
 
             db.session.commit()
 
             return redirect("/home")
 
-        flash("Incorrect password, please try again.", 'danger')
+        flash("Incorrect password, please try again.", "danger")
 
-    return render_template('users/edit.html', form=form, user_id=g.user.id)
+    return render_template("users/edit.html", form=form, user_id=g.user.id)
 
-@app.route('/users/delete', methods=["POST"])
+
+@app.route("/users/delete", methods=["POST"])
 def delete_user():
     """Delete user."""
 
@@ -281,17 +309,19 @@ def delete_user():
     form = UserEditForm(obj=g.user)
 
     if form.validate_on_submit():
-        if User.authenticate(g.user.username, form.password.data):   
+        if User.authenticate(g.user.username, form.password.data):
             do_logout()
             db.session.delete(g.user)
             db.session.commit()
             return redirect("/")
+
 
 @app.errorhandler(404)
 def page_not_found(e):
     """Show 404 NOT FOUND page."""
 
     return render_template("404.html"), 404
+
 
 @app.after_request
 def add_header(req):
@@ -300,8 +330,9 @@ def add_header(req):
     req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     req.headers["Pragma"] = "no-cache"
     req.headers["Expires"] = "0"
-    req.headers['Cache-Control'] = 'public, max-age=0'
+    req.headers["Cache-Control"] = "public, max-age=0"
     return req
+
 
 if __name__ == "__main__":
     app.run(debug=True)
