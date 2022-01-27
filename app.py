@@ -134,7 +134,6 @@ def home():
     query = db.session.query(Player.id, Player.full_name).all()
     form.player_names.choices = query
     form.player_names.choices.insert(0, ('', ''))
-    
 
 
     if request.method == "POST":
@@ -267,10 +266,6 @@ def profile():
             g.user.image_url = (
                 form.image_url.data or User.background_image.default.arg,
             )
-            g.user.background_image = (
-                form.background_image.data or User.background_image.default.arg,
-            )
-
             db.session.commit()
 
             return redirect("/home")
@@ -288,14 +283,12 @@ def delete_user():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    form = UserEditForm(obj=g.user)
+    do_logout()
 
-    if form.validate_on_submit():
-        if User.authenticate(g.user.username, form.password.data):
-            do_logout()
-            db.session.delete(g.user)
-            db.session.commit()
-            return redirect("/")
+    db.session.delete(g.user)
+    db.session.commit()
+
+    return redirect("/")
 
 
 @app.errorhandler(404)

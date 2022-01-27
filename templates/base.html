@@ -38,10 +38,14 @@
                 </button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="/users/{{ g.user.id }}/team/new">Create Team</a></li>
-                  <li><a class="dropdown-item" href="/users/{{ g.user.id }}/team">Profile</a></li>
-                  <li><a class="dropdown-item" href="/users/profile">Edit Profile</a></li>
+                  <li><a class="dropdown-item" href="/users/profile">Profile</a></li>
                   <div class="dropdown-divider"></div>
-                  <li></li><a class="dropdown-item link-primary" href="/logout">Log out</a>
+                  <li><a class="dropdown-item link-primary" href="/logout">Log out</a></li>
+                  <li>
+                    <form method="POST" action="/users/delete" class="form-inline">
+                      <button class="dropdown-item link-danger">Delete Profile</button>
+                    </form>
+                  </li>
                 </ul>
             </li>
             {% endif %}
