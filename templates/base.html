@@ -37,10 +37,8 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/users/team/new">Create New Team</a></li>
-                  {% for users_team in g.user.users_teams %}
-                  <li><a class="dropdown-item" href="/users/team/{{ g.user.users_team.id }}">User's Team</a></li>
-                  {% endfor %}
+                  <li><a class="dropdown-item" href="/users/{{ g.user.id }}/team/new">Create Team</a></li>
+                  <li><a class="dropdown-item" href="/users/{{ g.user.id }}/team">Profile</a></li>
                   <li><a class="dropdown-item" href="/users/profile">Edit Profile</a></li>
                   <div class="dropdown-divider"></div>
                   <li></li><a class="dropdown-item link-primary" href="/logout">Log out</a>

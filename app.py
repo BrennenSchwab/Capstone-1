@@ -77,8 +77,6 @@ def signup():
                 password=form.password.data,
                 email=form.email.data,
                 image_url=form.image_url.data or User.image_url.default.arg,
-                background_image=form.background_image.data
-                or User.background_image.default.arg,
             )
             db.session.commit()
 
@@ -135,12 +133,15 @@ def home():
 
     query = db.session.query(Player.id, Player.full_name).all()
     form.player_names.choices = query
+    form.player_names.choices.insert(0, ('', ''))
+    
+
 
     if request.method == "POST":
 
         player_id = form.data["player_names"]
 
-        if player_id == "None":
+        if player_id == '':
 
             flash("Enter Current NBA Player", "danger")
             return render_template("home.html", form=form)
@@ -183,6 +184,11 @@ def player_page(player_id):
     weight = a[8]
     exp = a[9]
 
+    if exp == 0:
+        exp = 'R'
+    else:
+        None
+
     team = str(team_city) + " " + str(team_name)
 
     return render_template(
@@ -205,27 +211,30 @@ def player_page(player_id):
     )
 
 
-@app.route("/users/team/new", methods=["GET", "POST"])
-def create_new_team():
+@app.route("/users/<int:user_id>/team/new", methods=["GET", "POST"])
+def create_new_team(user_id):
     """Page to create a new fantasy team for specific user."""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-
+    
     form = UserTeamPlayerAdd()
     query = db.session.query(Player.id, Player.full_name).all()
     form.player_name.choices = query
+    form.player_name.choices.insert(0, ('', ''))
 
     if request.method == "POST":
         all_players = []
         for pId in request.json["players"].keys():
-            u = UserTeam.query.filter_by(player_id=pId, user_id=g.user.id).first()
+            u = UserTeam.query.filter_by(player_id=pId, user_id=user_id).first()
             if not u:
-                all_players.append(UserTeam(player_id=pId, user_id=g.user.id))
+                all_players.append(UserTeam(player_id=pId, user_id=user_id))
         db.session.bulk_save_objects(all_players)
         db.session.commit()
-        return "success"
+        
+        return redirect("/")
+
 
     my_players = (
         UserTeam.query.filter_by(user_id=g.user.id).with_entities("player_id").all()
@@ -239,33 +248,6 @@ def create_new_team():
         addedPlayers=json.dumps(added_players),
     )
 
-
-@app.route("/users/team/<int:users_team_id>")
-def show_user_team(users_team_id):
-    """Display a user's created team"""
-
-    users_team = UserTeam.query.get_or_404(users_team_id)
-
-    user = users_team.user_id
-    players = users_team.player_id.get.all()  # user.player_id
-
-    for player in players:
-
-        player_fantasy = PlayerFantasy(player)
-        a = player_fantasy.get_position_and_team()
-        f = player_fantasy.get_player_stats_avg()
-        avg_table = HTML(f)
-        position = a[0]
-        team_abbr = a[1]
-
-    return render_template(
-        "fantasyteams.html",
-        users_team=users_team,
-        user=user,
-        avg=avg_table,
-        position=position,
-        abbr=team_abbr,
-    )
 
 
 @app.route("/users/profile", methods=["GET", "POST"])

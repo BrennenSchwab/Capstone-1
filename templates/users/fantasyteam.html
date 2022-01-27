@@ -2,19 +2,15 @@
 
 {% block content %}
 
-{% for user in users %}
-
-    {% if g.user %}
-
-        {% for player in user.players %}
+    {% for player in user.players %}
         <div class="container-fluid stats" >
             <Label><span class="info">{{ player.full_name }}</span>
                 <span class="info">{{ abbr }}</span>
                 <span class="info">{{ position }}</span></Label>
                 {{ avg }}
             <p></p>
-        {% endfor %}
     </div>
+    {% endfor %}
 
 
   

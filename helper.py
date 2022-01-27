@@ -46,9 +46,6 @@ player_info_add = [
     
 ]
 
-
-
-
 class PlayerFantasy:
     def __init__(self, player_id):
         self.player_id = player_id
@@ -222,12 +219,12 @@ class PlayerFantasy:
         team_name = info_new.at[0, 'TEAM_NAME']
         team_city = info_new.at[0, 'TEAM_CITY']
         school = info_new.at[0, 'SCHOOL']
-        birthdate = info_new.at[0, 'BIRTHDATE']
+        birthdate = info_new.at[0, 'BIRTHDATE'].split('T')[0]
         country = info_new.at[0, 'COUNTRY']
         height = info_new.at[0, 'HEIGHT']
         weight = info_new.at[0, 'WEIGHT']
         exp = info_new.at[0, 'SEASON_EXP']
-    
+        
     
         return (
             position, 
@@ -240,6 +237,5 @@ class PlayerFantasy:
             height, 
             weight, 
             exp)
-
 
 

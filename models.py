@@ -24,10 +24,9 @@ class User(db.Model):
     email = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, default="/static/images/default-pic.png")
-    background_image = db.Column(db.Text, default="/static/images/background.png")
 
     @classmethod
-    def signup(cls, email, username, password, image_url, background_image):
+    def signup(cls, email, username, password, image_url):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -40,7 +39,6 @@ class User(db.Model):
             email=email,
             password=hashed_pwd,
             image_url=image_url,
-            background_image=background_image,
         )
 
         db.session.add(user)
@@ -71,9 +69,10 @@ class UserTeam(db.Model):
     """User's saved team that will display the user's
     fantasy team and show statistics and link to player pages"""
 
-    __tablename__ = "users_team"
+    __tablename__ = "users_teams"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id", ondelete="CASCADE"),
@@ -97,16 +96,6 @@ class Player(db.Model):
     full_name = db.Column(db.Text())
     player_img = db.Column(db.Text, default=default_img)
 
-    users = db.relationship("User", secondary="users_team", backref="players")
+    user = db.relationship("User", secondary="users_teams", backref="players")
 
 
-class PlayerPreviousStat(db.Model):
-    __tablename__ = "player_prev_stat"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    player_id = db.Column(
-        db.Integer,
-        db.ForeignKey("players.id", ondelete="CASCADE"),
-        nullable=False,
-    )
-    per_mode36 = db.Column(db.Text())
-    stat = db.Column(db.JSON, nullable=True)
