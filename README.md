@@ -6,17 +6,17 @@ team players. More elements will be implemented at a later date including userte
 <hr></hr>
 
 <h2>Project</h2>
-<p> This project was designed as my first Capstone Project for the Springboard Software Engineering Program. The project required generating an app using Python, CSS, Javascript, and HTML</p>
+<p> This project was designed as my first Capstone Project for the Springboard Software Engineering Program. The project required generating an app using Python, CSS, Javascript, and HTML.</p>
 
 <h3>Deployment</h3>
 <p><b><i>Fantasy NBA</i></b> can do the following for any NBA Fantasy League participant:</p>
 <ul>
   <li>The homepage will allow the user to search for any current NBA players stats, as well as the option to create an account.</li>
-  <li>Upon submiting a players name, the user will be redirected to the desired player's page, wher player infor, details, and a variety of statistcal tables will be displayed</li>
+  <li>Upon submiting a players name, the user will be redirected to the desired player's page, wher player infor, details, and a variety of statistical tables will be displayed.</li>
     <ul>
-      <li> Tables displaying Per Game averages, Totals, stats for the last 5 and 10 games, player stats at home vs away, and player stat averages vs each opponent faced this season</li>
+      <li> Tables displaying Per Game averages, Totals, stats for the last 5 and 10 games, player stats at home vs away, and player stat averages vs each opponent faced this season.</li>
     </ul>
-  <li> A user can create a profile, and on doing so create a user specific team, mirroring your desired fantasy team for up to 13 players, allowing for direct access to player information of your teams players</li>
+  <li> A user can create a profile, and on doing so create a user specific team, mirroring your desired fantasy team for up to 13 players, allowing for direct access to player information of your teams players.</li>
 </ul>
 
 <h3>Navigation</h3>
@@ -24,15 +24,15 @@ team players. More elements will be implemented at a later date including userte
   <li>The homepage will allow the user to search for any current NBA players stats, as well as the option to create an account.</li>
   <li>Upon submiting a players name, the user will be redirected to the desired player's page, wher player infor, details, and a variety of statistcal tables will be displayed</li>
     <ul>
-      <li> Tables displaying Per Game averages, Totals, stats for the last 5 and 10 games, player stats at home vs away, and player stat averages vs each opponent faced this season</li>
+      <li> Tables displaying Per Game averages, Totals, stats for the last 5 and 10 games, player stats at home vs away, and player stat averages vs each opponent faced this season.</li>
     </ul>
   <li> A user can create a profile, where they are redirected to a sign in page.</li>
     <ul>
-      <li>If a user already has an account a login link is adjacent to the signup link</li>
+      <li>If a user already has an account a login link is adjacent to the signup link.</li>
     </ul>
   <li>After a user has signed in, they will be able to hover over their profile image in the top right of the navigation bar where a user can choose to:</li>
     <ul>
-      <li>Create a user specific team, mirroring your desired fantasy team for up to 13 players, allowing for direct access to player information of your teams players</li>
+      <li>Create a user specific team, mirroring your desired fantasy team for up to 13 players, allowing for direct access to player information of your team's players.</li>
       <li>Edit user profile</li>
       <li>Login</li>
       <li>or delete the user profile</li>
