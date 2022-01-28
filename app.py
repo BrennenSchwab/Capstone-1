@@ -25,7 +25,6 @@ from forms import (
     UserEditForm,
 )
 from helper import PlayerFantasy
-from seed import seed_basic_player_info
 import os
 import json
 
@@ -41,7 +40,6 @@ app.config["SECRET_KEY"] = "p-word-here-shhhhh"
 
 connect_db(app)
 
-seed_basic_player_info()
 
 @app.before_request
 def add_user_to_g():
