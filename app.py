@@ -1,7 +1,6 @@
 from flask import (
     Flask,
     request,
-    jsonify,
     render_template,
     session,
     flash,
@@ -9,11 +8,7 @@ from flask import (
     g,
     url_for,
 )
-from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql.elements import Null
-from nba_api.stats.library import data, parameters
-from nba_api.stats.static import teams, players
 import pandas as pd
 from IPython.display import HTML
 from models import db, connect_db, User, Player, UserTeam

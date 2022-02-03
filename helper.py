@@ -1,6 +1,5 @@
 from nba_api.stats.endpoints import playerfantasyprofile, commonplayerinfo
 import pandas as pd
-import pdb
 
 from IPython.display import HTML
 
