@@ -11,7 +11,7 @@ from flask import (
 from sqlalchemy.exc import IntegrityError
 import pandas as pd
 from IPython.display import HTML
-from models import db, connect_db, User, Player, UserTeam
+from models import db, connect_db, User, Player, UserTeam,PlayerStats
 from forms import (
     SignUpForm,
     LoginForm,
@@ -152,13 +152,14 @@ def player_page(player_id):
 
     # getting player stats and info via helper.py
     player = Player.query.get_or_404(player_id)
-    player_fantasy = PlayerFantasy(player_id)
-    a = player_fantasy.get_position_and_team()
-    d = player_fantasy.get_player_stats_total()
-    f = player_fantasy.get_player_stats_avg()
-    h = player_fantasy.get_player_stats_location()
-    g = player_fantasy.get_lastngames_stats()
-    s = player_fantasy.get_player_stats_opponents()
+    player_stats=PlayerStats.query.filter_by(player_id=player_id)
+    if player_stats[0]:
+        a = player_stats[0].position_team
+        d = pd.DataFrame.from_dict(player_stats[0].player_stats_total).to_html(index=False).replace("dataframe", "stats")
+        f = pd.DataFrame.from_dict(player_stats[0].player_stats_avg).to_html(index=False).replace("dataframe", "stats")
+        h = pd.DataFrame.from_dict(player_stats[0].player_stats_location).to_html(index=False).replace("dataframe", "stats")
+        g = pd.DataFrame.from_dict(player_stats[0].last_n_games_stats).to_html(index=False).replace("dataframe", "stats")
+        s = pd.DataFrame.from_dict(player_stats[0].player_stats_opponents).to_html(index=False).replace("dataframe", "stats")
 
     # Turning htmls from helper functions into HTML tables
     avg_table = HTML(f)

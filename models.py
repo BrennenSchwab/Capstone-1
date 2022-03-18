@@ -99,3 +99,21 @@ class Player(db.Model):
     user = db.relationship("User", secondary="users_teams", backref="players")
 
 
+
+class PlayerStats(db.Model):
+    """Table containing reference to requested players list."""
+
+    __tablename__ = "playerStats"
+
+    id = db.Column(db.Integer, primary_key=True)
+    player_id = db.Column(
+        db.Integer,
+        db.ForeignKey("players.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    position_team = db.Column(db.JSON)
+    player_stats_total = db.Column(db.JSON)
+    player_stats_avg = db.Column(db.JSON)
+    player_stats_location = db.Column(db.JSON)
+    last_n_games_stats = db.Column(db.JSON)
+    player_stats_opponents = db.Column(db.JSON)
