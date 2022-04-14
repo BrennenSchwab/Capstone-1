@@ -1,5 +1,5 @@
 <h1>FANTASY NBA!</h1>
-<p>This is a ssimple webite that allows a user to access stats and data from the nba_api, where a user can search for current season fanatsy stats for an NBA Player.
+<p>This is a simple webite that allows a user to access stats and data from the nba_api, where a user can search for current season fanatsy stats for an NBA Player.
 A user can use the site with or without an account. Making an account allows the user to access a Creat Team option where a user can re-create or create a new 
 potential fantasy team lineup. Here, players are stored to the user's team and can redirect to the players stat page for an easier method to directly access your fantasy
 team players. More elements will be implemented at a later date including userteam stats, user team fantasy value, and more!</p>
