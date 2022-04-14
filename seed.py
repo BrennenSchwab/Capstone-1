@@ -17,15 +17,15 @@ def seed_basic_player_info():
     all_players = []
     stats=[]
     idx=0
-    max_try=5
-    while players_list[idx]:
-        player=players_list[idx]
-        player_try_time=1
+
+    for player in players_list:
+        
         try:
             print(str(idx+1) + " of " + str(len(players_list)))
             print(player)
 
             player_exists=Player.query.filter_by(id=player["id"])
+
             if not player_exists.count():
                 all_players.append(
                     Player(
@@ -49,6 +49,7 @@ def seed_basic_player_info():
             
             player_stats_opponents = player_fantasy.get_player_stats_opponents() or {}
             player_stats_exist=PlayerStats.query.filter_by(player_id=player["id"])
+
             if player_stats_exist.count():
                 player_stats=player_stats_exist[0]
                 player_stats.player_stats_total=player_stats_total
@@ -58,6 +59,7 @@ def seed_basic_player_info():
                 player_stats.last_n_games_stats=last_n_games_stats
                 player_stats.player_stats_opponents=player_stats_opponents
                 stats.append(player_stats)
+
             else:
                 stats.append(PlayerStats(
                     player_id=player["id"],
@@ -70,11 +72,8 @@ def seed_basic_player_info():
                 ))
             idx=idx+1
         except:
-            if(player_try_time>max_try):
-                idx=idx+1
-            else:
-                player_try_time=player_try_time+1
-            print(f'repeating player {idx+1}')
+            print("failed")
+            idx+=1
             pass
 
     db.session.bulk_save_objects(all_players)
