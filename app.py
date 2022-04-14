@@ -27,7 +27,7 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("postgres://kcaljiwtijjpoy:9c117cea083fdf00069eeedc66a3ab0819b8c1619b193861d7df2c221f4d3538@ec2-54-224-64-114.compute-1.amazonaws.com:5432/dae0mcu2ldvr1j", "postgresql:///nba_stats")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = True
