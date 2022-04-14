@@ -12,27 +12,29 @@
             <li><b>Position:</b> <span class="info">{{ position }}</span></li>
             <li><b>Physicals:</b><span class="info">Height (ft, in): {{ height }}, Weight (lbs): {{ weight }}</span></li>
             <li> <b>Born:</b> <span class="info">{{ birthdate }}, {{ country }}</span></li>
-            <li><b>College:</b> <span class="info">{{ school }}</span></li>
+            <li><b>Last Attended:</b> <span class="info">{{ school }}</span></li>
             <li><b>NBA Experience:</b> <span class="info">{{ exp }}</span></li>
         </ul>    
     </div> 
 </div>
 <div class="container-fluid stats" >
-        <h2>Stats Progression: Per Game</h2>
+    <div>
+        <h2>Stats Progression: Per Game <i class="arrow down"></i></h2>
         {{ avg }}
-        <p></p>
-        <h2>Stats Progression: Totals</h2>
+    </div>
+    <div>
+        <h2>Stats Progression: Totals <i class="arrow down"></i></h2>
         {{ total }}
-        <p></p>
-        <h2>Games Streak</h2>
+    </div>
+        <h2>Games Streak <i class="arrow down"></i></h2>
         <p></p>
         {{ ngames }}
         <p></p>
-        <h2>Home vs. Away Stats</h2>
+        <h2>Home vs. Away Stats <i class="arrow down"></i></h2>
         <p></p>
         {{ location }}
         <p></p>
-        <h2>Stats vs Opponent</h2>
+        <h2>Stats vs Opponent <i class="arrow down"></i></h2>
         <p></p>
         {{ opponent }}
         <p></p>
@@ -40,8 +42,10 @@
 </div>
 
 <script>
-    $("table").off("click").on("click", function(e){
-    var $table = $(e.currentTarget)
+    $("i").off("click").on("click", function(e){
+    var $table = $(e.currentTarget).closest("div").find("table")
+    $(e.currentTarget).toggleClass("down")
+    $(e.currentTarget).toggleClass("right")
     $table.toggleClass("hidden")
 });
 </script>

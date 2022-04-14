@@ -222,6 +222,11 @@ def create_new_team(user_id):
 
     if request.method == "POST":
         all_players = []
+        user_players = UserTeam.query.filter_by(user_id=user_id).all()
+        for player in user_players:
+            if player.player_id not in request.json["players"].keys():
+                UserTeam.query.filter_by(user_id=user_id, player_id=player.player_id).delete()
+                db.session.commit()
         for pId in request.json["players"].keys():
             u = UserTeam.query.filter_by(player_id=pId, user_id=user_id).first()
             if not u:

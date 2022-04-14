@@ -243,7 +243,7 @@ class PlayerFantasy:
         country = info_new.at[0, 'COUNTRY']
         height = info_new.at[0, 'HEIGHT']
         weight = float(info_new.at[0, 'WEIGHT'])
-        exp = float(info_new.at[0, 'SEASON_EXP'])
+        exp = int(info_new.at[0, 'SEASON_EXP'])
     
         return [
             position, 

@@ -48,6 +48,7 @@
 
                     function addPlayer(name, href){
                         const newPlayer= document.createElement("li")
+                        newPlayer.id = href
                         newPlayer.innerHTML= `<a class='link' href='/stats/${href}'>${name}</a>`
                         $(`<span>&nbsp<a id='remove' style='font-size: 11px; color: red;' class='remove'>X</a></span>`).appendTo(newPlayer)
                         return newPlayer
@@ -62,7 +63,7 @@
                         loadedPlayers.forEach((p)=>{
                             const playerName=constructPlayerNameFromId(p)
                             if(!myPlayers[p]){
-                                document.querySelector("#selectedPlayers").appendChild(addPlayer(playerName))
+                                document.querySelector("#selectedPlayers").appendChild(addPlayer(playerName, p))
                             }
                             myPlayers[p]=playerName
                         })
@@ -73,7 +74,8 @@
 
                     $(document).on('click', ".remove", function(e){
                         $rem = $(this).closest('li'); 
-                        console.log()
+                        console.log($rem.attr("id"), myPlayers)
+                        delete myPlayers[$rem.attr("id")]
                         $rem.remove();
                     });
 
