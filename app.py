@@ -300,7 +300,7 @@ def page_not_found(e):
 
     return render_template("404.html"), 404
 
-@app.errorhandler(DatabaseError)
+@app.errorhandler(500)
 def page_not_found(e):
     """Show 404 NOT FOUND page."""
 
