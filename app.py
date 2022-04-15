@@ -8,6 +8,7 @@ from flask import (
     g,
     url_for,
 )
+from psycopg2 import DatabaseError
 from sqlalchemy.exc import IntegrityError
 import pandas as pd
 from IPython.display import HTML
@@ -294,11 +295,16 @@ def delete_user():
 
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(e):
     """Show 404 NOT FOUND page."""
 
     return render_template("404.html"), 404
 
+@app.errorhandler(DatabaseError)
+def page_not_found(e):
+    """Show 404 NOT FOUND page."""
+
+    return render_template("500.html"), 500
 
 @app.after_request
 def add_header(req):
